@@ -1,0 +1,19 @@
+{
+  "name": "webgl-demo-1",
+  "version": "0.0.0",
+  "authors": [
+    "Don McCurdy <don.r.mccurdy@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "threejs": "*"
+  }
+}
