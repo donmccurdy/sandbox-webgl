@@ -37,7 +37,11 @@
 
 	var vShader = document.querySelector('#vertex-shader'),
 		fShader = document.querySelector('#fragment-shader'),
+		uniforms = { amplitude: { type: 'f', value: 0 } },
+		attributes = { displacement: {type: 'f', value: []} },
 		shaderMaterial = new THREE.ShaderMaterial({
+			uniforms: uniforms,
+			attributes: attributes,
 			vertexShader: vShader.innerText,
 			fragmentShader: fShader.innerText
 		});
@@ -58,6 +62,16 @@
 
 	scene.add(sphere);
 
+	/* Spikey spikes
+	********************************/
+
+	var verts = sphere.geometry.vertices,
+		values = attributes.displacement.value;
+
+	for (var v = 0; v < verts.length; v++) {
+		values.push(Math.random() * 30);
+	}
+
 	/* Lights
 	********************************/
 
@@ -69,11 +83,16 @@
 
 	scene.add(pointLight);
 
-	/* Bootstrap
+	/* Animation loop
 	********************************/
 
-	renderer.render(scene, camera);
-
-	window.sphere = sphere;
+	var frame = 0;
+	function update () {
+		uniforms.amplitude.value = Math.sin(frame);
+		frame += 0.1;
+		renderer.render(scene, camera);
+		window.requestAnimationFrame(update);
+	}
+	window.requestAnimationFrame(update);
 
 }(window.THREE));
