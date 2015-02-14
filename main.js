@@ -32,6 +32,16 @@
 
 	container.appendChild(renderer.domElement);
 
+	/* Material
+	********************************/
+
+	var vShader = document.querySelector('#vertex-shader'),
+		fShader = document.querySelector('#fragment-shader'),
+		shaderMaterial = new THREE.ShaderMaterial({
+			vertexShader: vShader.innerText,
+			fragmentShader: fShader.innerText
+		});
+
 	/* Model
 	********************************/
 
@@ -39,11 +49,11 @@
 		segments = 16,
 		rings = 16;
 
-	var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000});
+	// var shaderMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000});
 
 	var sphere = new THREE.Mesh(
 		new THREE.SphereGeometry(radius, segments, rings),
-		sphereMaterial
+		shaderMaterial
 	);
 
 	scene.add(sphere);
