@@ -4,7 +4,7 @@
  * Based on: http://aerotwist.com/tutorials/getting-started-with-three-js/
  */
 
-(function (THREE) {
+(function (THREE, ShaderLoader) {
 
 	/* Scene
 	********************************/
@@ -32,67 +32,75 @@
 
 	container.appendChild(renderer.domElement);
 
-	/* Material
+	/* Load shaders
 	********************************/
 
-	var vShader = document.querySelector('#vertex-shader'),
-		fShader = document.querySelector('#fragment-shader'),
-		uniforms = { amplitude: { type: 'f', value: 0 } },
+	var shaders = new ShaderLoader('shaders', 'shaderChunks');
+	shaders.shaderSetLoaded = init;
+	shaders.load('default-vertex', 'VERT', 'vertex');
+	shaders.load('default-fragment', 'FRAG', 'fragment');
+
+	function init () {
+
+		/* Material
+		********************************/
+
+		var uniforms = { amplitude: { type: 'f', value: 0 } },
 		attributes = { displacement: {type: 'f', value: []} },
 		shaderMaterial = new THREE.ShaderMaterial({
 			uniforms: uniforms,
 			attributes: attributes,
-			vertexShader: vShader.innerText,
-			fragmentShader: fShader.innerText
+			vertexShader: shaders.vs.VERT,
+			fragmentShader: shaders.fs.FRAG
 		});
 
-	/* Model
-	********************************/
+		/* Model
+		********************************/
 
-	var radius = 50,
-		segments = 16,
-		rings = 16;
+		var radius = 50,
+			segments = 16,
+			rings = 16;
 
-	// var shaderMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000});
+		var sphere = new THREE.Mesh(
+			new THREE.SphereGeometry(radius, segments, rings),
+			shaderMaterial
+		);
 
-	var sphere = new THREE.Mesh(
-		new THREE.SphereGeometry(radius, segments, rings),
-		shaderMaterial
-	);
+		scene.add(sphere);
 
-	scene.add(sphere);
+		/* Spikey spikes
+		********************************/
 
-	/* Spikey spikes
-	********************************/
+		var verts = sphere.geometry.vertices,
+			values = attributes.displacement.value;
 
-	var verts = sphere.geometry.vertices,
-		values = attributes.displacement.value;
+		for (var v = 0; v < verts.length; v++) {
+			values.push(Math.random() * 30);
+		}
 
-	for (var v = 0; v < verts.length; v++) {
-		values.push(Math.random() * 30);
-	}
+		/* Lights
+		********************************/
 
-	/* Lights
-	********************************/
+		var pointLight = new THREE.PointLight(0xFFFFFF);
 
-	var pointLight = new THREE.PointLight(0xFFFFFF);
+		pointLight.position.x = 10;
+		pointLight.position.y = 50;
+		pointLight.position.z = 130;
 
-	pointLight.position.x = 10;
-	pointLight.position.y = 50;
-	pointLight.position.z = 130;
+		scene.add(pointLight);
 
-	scene.add(pointLight);
+		/* Animation loop
+		********************************/
 
-	/* Animation loop
-	********************************/
-
-	var frame = 0;
-	function update () {
-		uniforms.amplitude.value = Math.sin(frame);
-		frame += 0.1;
-		renderer.render(scene, camera);
+		var frame = 0;
+		function update () {
+			uniforms.amplitude.value = Math.sin(frame);
+			frame += 0.1;
+			renderer.render(scene, camera);
+			window.requestAnimationFrame(update);
+		}
 		window.requestAnimationFrame(update);
-	}
-	window.requestAnimationFrame(update);
 
-}(window.THREE));
+	}
+
+}(window.THREE, window.ShaderLoader));

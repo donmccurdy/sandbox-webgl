@@ -1,0 +1,3 @@
+[submodule "lib/ShaderLoader"]
+	path = lib/ShaderLoader
+	url = git@github.com:donmccurdy/ShaderLoader.git

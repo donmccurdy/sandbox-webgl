@@ -2,46 +2,13 @@
 <html>
 	<head>
 		<title>WebGL Demo 1</title>
+
 		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
-		<style>
-			body {
-				margin: 0;
-				overflow: hidden;
-			}
-		</style>
+		<link rel="stylesheet" href="assets/style.css">
+
 		<script src="bower_components/threejs/build/three.js"></script>
-		<script type="x-shader/x-vertex" id="vertex-shader">
-			#ifdef GL_ES
-			precision highp float;
-			#endif
-
-			uniform float amplitude;
-			attribute float displacement;
-			varying vec3 vNormal;
-
-			void main()
-			{
-				vNormal = normal;
-				vec3 newPosition = position + normal * vec3(displacement * amplitude);
-				gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-			}
-		</script>
-		<script type="x-shader/x-fragment" id="fragment-shader">
-			#ifdef GL_ES
-			precision highp float;
-			#endif
-
-			varying vec3 vNormal;
-
-			void main()
-			{
-				vec3 light = vec3(0.5, 0.2, 1.0);
-				light = normalize(light);
-				float dProd = max(0.0, dot(vNormal, light));
-
-				gl_FragColor = vec4(dProd, dProd, dProd, 1.0);
-			}
-		</script>
+		<script src="bower_components/fetch/fetch.js"></script>
+		<script src="lib/ShaderLoader/ShaderLoader.js"></script>
 	</head>
 	<body>
 		<div id="container"></div>
