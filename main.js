@@ -24,7 +24,7 @@
 		effect = new THREE.StereoEffect(renderer);
 
 	effect.setSize(WIDTH, HEIGHT);
-	effect.eyeSeparation = 1; // seems low?
+	effect.eyeSeparation = 2; // it burns!
 
 	var scene = new THREE.Scene();
 
