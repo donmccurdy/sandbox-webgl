@@ -4,7 +4,7 @@
  * Based on: http://aerotwist.com/tutorials/getting-started-with-three-js/
  */
 
-(function (THREE, ShaderLoader) {
+(function (THREE, ShaderLoader, DeviceOrientationController) {
 
 	/* Scene
 	********************************/
@@ -20,7 +20,11 @@
 	var container = document.querySelector('#container');
 
 	var renderer = new THREE.WebGLRenderer(),
-		camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+		camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR),
+		effect = new THREE.StereoEffect(renderer);
+
+	effect.setSize(WIDTH, HEIGHT);
+	effect.eyeSeparation = 1; // seems low?
 
 	var scene = new THREE.Scene();
 
@@ -31,6 +35,20 @@
 	renderer.setSize(WIDTH, HEIGHT);
 
 	container.appendChild(renderer.domElement);
+
+	/* Responsive layout
+	********************************/
+
+	window.addEventListener('resize', function () {
+		WIDTH = window.innerWidth;
+		HEIGHT = window.innerHeight;
+		ASPECT = WIDTH / HEIGHT;
+
+		camera.aspect = ASPECT;
+		camera.updateProjectionMatrix();
+		renderer.setSize(WIDTH, HEIGHT);
+		effect.setSize(WIDTH, HEIGHT);
+	}, false);
 
 	/* Load shaders
 	********************************/
@@ -68,6 +86,12 @@
 
 		scene.add(sphere);
 
+		/* View controller
+		********************************/
+
+		var controls = new DeviceOrientationController(sphere, renderer.domElement);
+		controls.connect();
+
 		/* Spikey spikes
 		********************************/
 
@@ -96,11 +120,17 @@
 		function update () {
 			uniforms.amplitude.value = Math.sin(frame);
 			frame += 0.1;
-			renderer.render(scene, camera);
+			controls.update();
+			effect.render(scene, camera);
 			window.requestAnimationFrame(update);
 		}
 		window.requestAnimationFrame(update);
 
+		/* Debugging exports
+		********************************/
+
+		window.effect = effect;
+
 	}
 
-}(window.THREE, window.ShaderLoader));
+}(window.THREE, window.ShaderLoader, window.DeviceOrientationController));
