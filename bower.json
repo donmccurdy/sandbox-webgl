@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "threejs": "*",
-    "fetch": "~0.7.0"
+    "fetch": "~0.7.0",
+    "stats.js": "*"
   }
 }
