@@ -26,7 +26,7 @@
 
 	scene.add(camera);
 
-	camera.position.z = 300;
+	camera.position.z = 25;
 
 	renderer.setSize(WIDTH, HEIGHT);
 
