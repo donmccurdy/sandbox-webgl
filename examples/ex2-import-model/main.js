@@ -40,7 +40,7 @@
 		console.log(item, loaded, total);
 	};
 
-	var loader = new THREE.OBJLoader(manager);
+	var loader = new THREE.OBJMTLLoader(manager);
 
 	/* Stats
 	********************************/
@@ -68,21 +68,11 @@
 		renderer.setSize(WIDTH, HEIGHT);
 	}, false);
 
-	/* Material
-	********************************/
-
-	var shaderMaterial = new THREE.MeshLambertMaterial({color: 0x88FF88});
-
 	/* Model
 	********************************/
 
-	loader.load('models/tree1.obj', function (object) {
-		object.traverse(function (child) {
-			if (child instanceof THREE.Mesh) {
-				child.material = shaderMaterial;
-			}
-		});
-		object.position.y = - 5;
+	loader.load('models/tree2.obj', 'models/tree2.mtl', function (object) {
+		object.position.y = -2.5;
 		scene.add(object);
 	});
 
