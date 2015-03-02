@@ -16,6 +16,7 @@
   "dependencies": {
     "threejs": "*",
     "fetch": "~0.7.0",
-    "stats.js": "*"
+    "stats.js": "*",
+    "THREE.Terrain": "~1.2.0"
   }
 }
