@@ -20,3 +20,5 @@ live-server .
 
 Your browser should open automatically to http://localhost:8080.
 From there you can navigate to any of the examples.
+
+![example 3](https://dl.dropboxusercontent.com/u/42869844/LTS/webgl-sandbox-1.png)
