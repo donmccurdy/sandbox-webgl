@@ -6,6 +6,14 @@
 
 (function (THREE, Stats) {
 
+	var blocker = document.getElementById( 'blocker' );
+	var instructions = document.getElementById( 'instructions' );
+
+	var camera, scene, renderer,
+		controls, raycaster, terrain, water;
+
+	var canJump = true;
+
 	/* Scene
 	********************************/
 
@@ -17,21 +25,104 @@
 		NEAR = 0.1,
 		FAR = 10000;
 
-	var container = document.querySelector('#container');
+	var container = blocker;
 
-	var renderer = new THREE.WebGLRenderer(),
-		camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+	/* PointerLock
+	********************************/
 
-	var scene = new THREE.Scene();
+	var havePointerLock = 'pointerLockElement' in document
+		|| 'mozPointerLockElement' in document
+		|| 'webkitPointerLockElement' in document;
 
-	scene.add(camera);
+	if ( havePointerLock ) {
 
-	camera.position.y = 125;
-	camera.position.z = 125;
+		var element = document.body;
 
-	renderer.setSize(WIDTH, HEIGHT);
+		var pointerlockchange = function () {
 
-	container.appendChild(renderer.domElement);
+			if ( document.pointerLockElement === element
+					|| document.mozPointerLockElement === element
+					|| document.webkitPointerLockElement === element ) {
+
+				controlsEnabled = true;
+				controls.enabled = true;
+
+				blocker.style.display = 'none';
+
+			} else {
+
+				controls.enabled = false;
+
+				blocker.style.display = '-webkit-box';
+				blocker.style.display = '-moz-box';
+				blocker.style.display = 'box';
+
+				instructions.style.display = '';
+
+			}
+
+		};
+
+		var pointerlockerror = function () {
+			instructions.style.display = '';
+		};
+
+		// Hook pointer lock state change events
+		document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+		document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+		document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+
+		document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+		document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+		document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+
+		instructions.addEventListener( 'click', function () {
+
+			instructions.style.display = 'none';
+
+			// Ask the browser to lock the pointer
+			element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+
+			if ( /Firefox/i.test( navigator.userAgent ) ) {
+
+				var fullscreenchange = function () {
+
+					if ( document.fullscreenElement === element
+						|| document.mozFullscreenElement === element
+						|| document.mozFullScreenElement === element ) {
+
+						document.removeEventListener( 'fullscreenchange', fullscreenchange );
+						document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+
+						element.requestPointerLock();
+					}
+
+				};
+
+				document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+				document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+
+				element.requestFullscreen = element.requestFullscreen
+					|| element.mozRequestFullscreen
+					|| element.mozRequestFullScreen
+					|| element.webkitRequestFullscreen;
+
+				element.requestFullscreen();
+
+			} else {
+
+				element.requestPointerLock();
+
+			}
+
+		}, false );
+
+	} else {
+
+		instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+
+	}
+
 
 	/* Resources
 	********************************/
@@ -56,120 +147,265 @@
 
 	document.body.appendChild(stats.domElement);
 
-	/* Responsive layout
+	/* Init
 	********************************/
 
-	window.addEventListener('resize', function () {
-		WIDTH = window.innerWidth;
-		HEIGHT = window.innerHeight;
-		ASPECT = WIDTH / HEIGHT;
+	init();
+	animate();
 
-		camera.aspect = ASPECT;
-		camera.updateProjectionMatrix();
+	var controlsEnabled = false;
+
+	var moveForward = false;
+	var moveBackward = false;
+	var moveLeft = false;
+	var moveRight = false;
+
+	var prevTime = window.performance.now();
+	var velocity = new THREE.Vector3();
+
+	function init() {
+
+		renderer = new THREE.WebGLRenderer();
 		renderer.setSize(WIDTH, HEIGHT);
-	}, false);
 
-	/* Terrain
-	********************************/
+		camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+		camera.position.y = 125;
+		camera.position.z = 125;
 
-	var xSegments = 32,
-		ySegments = 32;
+		scene = new THREE.Scene();
+		scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
+		scene.add(camera);
 
-	var terrain = THREE.Terrain({
-		easing: THREE.Terrain.Linear,
-		frequency: 10,
-		heightmap: THREE.Terrain.DiamondSquare,
-		material: new THREE.MeshLambertMaterial({color: 0xFAFAFA}),
-		maxHeight: 50,
-		minHeight: -100,
-		steps: 3,
-		useBufferGeometry: false,
-		xSegments: xSegments,
-		xSize: 512,
-		ySegments: ySegments,
-		ySize: 512
-	});
+		container.appendChild(renderer.domElement);
 
-	scene.add(terrain);
+		/* Lighting
+		********************************/
 
-	/* Scenery
-	********************************/
+		var light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
+		light.position.set( 0.5, 1, 0.75 );
+		scene.add( light );
 
-	loader.load('models/tree.obj', 'models/tree.mtl', function (object) {
-		var trees = THREE.Terrain.ScatterMeshes(terrain.children[0].geometry, {
-			mesh: object,
-			w: xSegments,
-			h: ySegments,
-			spread: 0.4,
-			randomness: Math.random
+		controls = new THREE.PointerLockControls( camera );
+		scene.add( controls.getObject() );
+
+		/* Keyboard Events
+		********************************/
+
+		var onKeyDown = function ( event ) {
+
+			switch ( event.keyCode ) {
+
+				case 38: // up
+				case 87: // w
+					moveForward = true;
+					break;
+
+				case 37: // left
+				case 65: // a
+					moveLeft = true; break;
+
+				case 40: // down
+				case 83: // s
+					moveBackward = true;
+					break;
+
+				case 39: // right
+				case 68: // d
+					moveRight = true;
+					break;
+
+				case 32: // space
+					if ( canJump === true ) velocity.y += 350;
+					canJump = false;
+					break;
+
+			}
+
+		};
+
+		var onKeyUp = function ( event ) {
+
+			switch( event.keyCode ) {
+
+				case 38: // up
+				case 87: // w
+					moveForward = false;
+					break;
+
+				case 37: // left
+				case 65: // a
+					moveLeft = false;
+					break;
+
+				case 40: // down
+				case 83: // s
+					moveBackward = false;
+					break;
+
+				case 39: // right
+				case 68: // d
+					moveRight = false;
+					break;
+
+			}
+
+		};
+
+		document.addEventListener( 'keydown', onKeyDown, false );
+		document.addEventListener( 'keyup', onKeyUp, false );
+
+		raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
+
+		/* Terrain
+		********************************/
+
+		var xSegments = 32,
+			ySegments = 32;
+
+		terrain = THREE.Terrain({
+			easing: THREE.Terrain.Linear,
+			frequency: 10,
+			heightmap: THREE.Terrain.DiamondSquare,
+			material: new THREE.MeshLambertMaterial({color: 0xFAFAFA}),
+			maxHeight: 150,
+			minHeight: 0,
+			steps: 3,
+			useBufferGeometry: false,
+			xSegments: xSegments,
+			xSize: 512,
+			ySegments: ySegments,
+			ySize: 512
 		});
 
-		trees.rotateX(-1 * Math.PI / 2); // lolwut
+		scene.add(terrain);
 
-		scene.add(trees);
-	});
+		/* Scenery
+		********************************/
 
-	/* View controller
-	********************************/
+		loader.load('models/tree.obj', 'models/tree.mtl', function (object) {
+			var trees = THREE.Terrain.ScatterMeshes(terrain.children[0].geometry, {
+				mesh: object,
+				w: xSegments,
+				h: ySegments,
+				spread: 0.4,
+				randomness: Math.random
+			});
 
-	var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
-	// var controls = new THREE.OrbitControls(camera, renderer.domElement);
-	// controls.freeze = true;
-	controls.movementSpeed = 0.0001;
-	controls.lookSpeed = 0.0000003; //.075
+			trees.rotateX(-1 * Math.PI / 2); // lolwut
 
-    controls.lat = -41;
-    controls.lon = -139;
-    controls.update(0);
+			scene.add(trees);
+		});
 
-	/* Lights
-	********************************/
+		/* Sky
+		********************************/
 
-	// 0xe8bdb0
-	var skyLight = new THREE.DirectionalLight(0xAAAAAA, 1.6);
-	skyLight.position.set(2950, 2625, -160);
-	scene.add(skyLight);
+		THREE.ImageUtils.loadTexture('assets/sky1.jpg', undefined, function(t1) {
+			var skyDome = new THREE.Mesh(
+				new THREE.SphereGeometry(8192, 16, 16, 0, Math.PI*2, 0, Math.PI*0.5),
+				new THREE.MeshBasicMaterial({map: t1, side: THREE.BackSide, fog: false})
+			);
+			skyDome.position.y = -99;
+			scene.add(skyDome);
+		});
 
-	// 0xc3eaff
-	var light = new THREE.DirectionalLight(0xA0A0D0, 0.75);
-	light.position.set(-1, -0.5, -1);
-	scene.add(light);
 
-	/* Sky
-	********************************/
+		/* Water
+		********************************/
 
-	THREE.ImageUtils.loadTexture('assets/sky1.jpg', undefined, function(t1) {
-		var skyDome = new THREE.Mesh(
-			new THREE.SphereGeometry(8192, 16, 16, 0, Math.PI*2, 0, Math.PI*0.5),
-			new THREE.MeshBasicMaterial({map: t1, side: THREE.BackSide, fog: false})
+		water = new THREE.Mesh(
+			new THREE.PlaneGeometry(16384+1024, 16384+1024, 16, 16),
+			new THREE.MeshLambertMaterial({color: 0x006ba0, transparent: true, opacity: 0.6})
 		);
-		skyDome.position.y = -99;
-		scene.add(skyDome);
-	});
+		water.position.y = -99;
+		water.rotation.x = -0.5 * Math.PI;
+		scene.add(water);
 
+		/* Renderer
+		********************************/
 
-	/* Water
-	********************************/
+		renderer = new THREE.WebGLRenderer();
+		renderer.setClearColor( 0xffffff );
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		document.body.appendChild( renderer.domElement );
 
-	var water = new THREE.Mesh(
-		new THREE.PlaneGeometry(16384+1024, 16384+1024, 16, 16),
-		new THREE.MeshLambertMaterial({color: 0x006ba0, transparent: true, opacity: 0.6})
-	);
-	water.position.y = -99;
-	water.rotation.x = -0.5 * Math.PI;
-	scene.add(water);
+		window.addEventListener( 'resize', onWindowResize, false );
 
-	/* Animation loop
-	********************************/
-
-	function update (delta) {
-		stats.begin();
-		controls.update(delta);
-		renderer.render(scene, camera);
-		stats.end();
-		window.requestAnimationFrame(update);
 	}
-	window.requestAnimationFrame(update);
+
+
+	/* Resize
+	********************************/
+
+	function onWindowResize() {
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+	}
+
+
+	/* Animation
+	********************************/
+
+	function animate() {
+
+		window.requestAnimationFrame( animate );
+
+		stats.begin();
+
+		if ( controlsEnabled ) {
+			raycaster.ray.origin.copy( controls.getObject().position );
+			raycaster.ray.origin.y -= 10;
+
+			var intersections = raycaster.intersectObjects( [terrain, water] );
+
+			var isOnObject = intersections.length > 0;
+
+			var time = window.performance.now();
+			var delta = ( time - prevTime ) / 1000;
+
+			velocity.x -= velocity.x * 10.0 * delta;
+			velocity.z -= velocity.z * 10.0 * delta;
+
+			velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+
+			if ( moveForward ) velocity.z -= 400.0 * delta;
+			if ( moveBackward ) velocity.z += 400.0 * delta;
+
+			if ( moveLeft ) velocity.x -= 400.0 * delta;
+			if ( moveRight ) velocity.x += 400.0 * delta;
+
+			if ( isOnObject === true ) {
+				velocity.y = Math.max( 0, velocity.y );
+
+				canJump = true;
+			}
+
+			controls.getObject().translateX( velocity.x * delta );
+			controls.getObject().translateY( velocity.y * delta );
+			controls.getObject().translateZ( velocity.z * delta );
+
+			if ( controls.getObject().position.y < 10 ) {
+
+				velocity.y = 0;
+				controls.getObject().position.y = 10;
+
+				canJump = true;
+
+			}
+
+			prevTime = time;
+
+		}
+
+		renderer.render( scene, camera );
+
+		stats.end();
+
+	}
 
 	/* Debugging exports
 	********************************/
