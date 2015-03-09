@@ -26,7 +26,10 @@
 
 	scene.add(camera);
 
-	camera.position.z = 25;
+	window.camera = camera;
+	camera.position.z = 125;
+	camera.position.y = 200;
+	camera.up.set( 0, 0, -1 );
 
 	renderer.setSize(WIDTH, HEIGHT);
 	renderer.setClearColor(0xF0F0F0);
@@ -112,7 +115,7 @@
 	/* View controller
 	********************************/
 
-	var controls = new THREE.OrbitControls(camera, renderer.domElement);
+	var controls = new THREE.MapControls(camera, renderer.domElement);
 
 	/* Lights
 	********************************/
