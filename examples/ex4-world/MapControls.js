@@ -29,8 +29,8 @@ THREE.MapControls = function ( object, domElement ) {
 	this.staticMoving = false;
 	this.dynamicDampingFactor = 0.2;
 
-	this.minDistance = 0;
-	this.maxDistance = Infinity;
+	this.minDistance = 25;
+	this.maxDistance = 1000;
 
 	this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
@@ -99,7 +99,7 @@ THREE.MapControls = function ( object, domElement ) {
 
 	this.handleEvent = function ( event ) {
 
-		if ( typeof this[ event.type ] == 'function' ) {
+		if ( typeof this[ event.type ] === 'function' ) {
 
 			this[ event.type ]( event );
 
@@ -133,8 +133,8 @@ THREE.MapControls = function ( object, domElement ) {
 		return function ( pageX, pageY ) {
 
 			mouseOnBall.set(
-				( pageX - _this.screen.width * 0.5 - _this.screen.left ) / (_this.screen.width*.5),
-				( _this.screen.height * 0.5 + _this.screen.top - pageY ) / (_this.screen.height*.5),
+				( pageX - _this.screen.width * 0.5 - _this.screen.left ) / (_this.screen.width*0.5),
+				( _this.screen.height * 0.5 + _this.screen.top - pageY ) / (_this.screen.height*0.5),
 				0.0
 			);
 
@@ -148,7 +148,7 @@ THREE.MapControls = function ( object, domElement ) {
 
 				} else {
 
-					mouseOnBall.z = .5 / length;
+					mouseOnBall.z = 0.5 / length;
 					
 				}
 
@@ -164,7 +164,7 @@ THREE.MapControls = function ( object, domElement ) {
 
 			_eye.copy( _this.object.position ).sub( _this.target );
 
-			vector.copy( _this.object.up ).setLength( mouseOnBall.y )
+			vector.copy( _this.object.up ).setLength( mouseOnBall.y );
 			vector.add( objectUp.copy( _this.object.up ).cross( _eye ).setLength( mouseOnBall.x ) );
 			vector.add( _eye.setLength( mouseOnBall.z ) );
 
@@ -209,21 +209,23 @@ THREE.MapControls = function ( object, domElement ) {
 				}
 
 			}
-		}
+		};
 
 	}());
 
 	this.zoomCamera = function () {
 
+		var factor;
+
 		if ( _state === STATE.TOUCH_ZOOM_PAN ) {
 
-			var factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
+			factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
 			_touchZoomDistanceStart = _touchZoomDistanceEnd;
 			_eye.multiplyScalar( factor );
 
 		} else {
 
-			var factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * _this.zoomSpeed;
+			factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * _this.zoomSpeed;
 
 			if ( factor !== 1.0 && factor > 0.0 ) {
 
@@ -293,6 +295,9 @@ THREE.MapControls = function ( object, domElement ) {
 			if ( _eye.lengthSq() < _this.minDistance * _this.minDistance ) {
 
 				_this.object.position.addVectors( _this.target, _eye.setLength( _this.minDistance ) );
+				
+				// Prevent zoom beyond minimum from accruing
+				_zoomStart.y = 0;
 
 			}
 
