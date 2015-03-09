@@ -27,7 +27,6 @@
 	scene.add(camera);
 
 	window.camera = camera;
-	camera.position.z = 125;
 	camera.position.y = 200;
 	camera.up.set( 0, 0, -1 );
 
@@ -39,9 +38,11 @@
 	/* Material
 	********************************/
 
-	var material = new THREE.MeshPhongMaterial({
-		color: 0xACDDAB,
-		opacity: 1.0
+	// https://color.adobe.com/Campfire-color-theme-2528696
+	var COLORS = [0x588C7E, 0xF2E394, 0xF2AE72, 0xD96459, 0x8C4646];
+
+	var materials = COLORS.map(function (color) {
+		return new THREE.MeshPhongMaterial({color: color, opacity: 1.0});
 	});
 
 	/* Countries
@@ -59,7 +60,7 @@
 		});
 
 	function loadCountry (country) {
-		var mesh,
+		var mesh, material,
 			paths = THREE.transformSVGPath(country.feature);
 		
 		for (var i = 0; i < paths.length; i++) {
@@ -71,6 +72,7 @@
 			if (i > 0) paths[0].merge(paths[i]);
 		}
 
+		material = materials[Math.floor((Math.random() * materials.length))];
 		mesh = new THREE.Mesh(paths[0], material);
 
 		mesh.name = country.data.name;
