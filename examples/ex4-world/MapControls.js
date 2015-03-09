@@ -6,7 +6,7 @@
 THREE.MapControls = function ( object, domElement ) {
 
 	var _this = this;
-	var STATE = { NONE: -1, PAN: 0, ZOOM: 1, TOUCH_ZOOM_PAN: 4 };
+	var STATE = { NONE: -1, PAN: 0, ZOOM: 1, TOUCH_PAN: 3, TOUCH_ZOOM: 4 };
 
 	this.object = object;
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
@@ -217,7 +217,7 @@ THREE.MapControls = function ( object, domElement ) {
 
 		var factor;
 
-		if ( _state === STATE.TOUCH_ZOOM_PAN ) {
+		if ( _state === STATE.TOUCH_ZOOM ) {
 
 			factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
 			_touchZoomDistanceStart = _touchZoomDistanceEnd;
@@ -506,24 +506,23 @@ THREE.MapControls = function ( object, domElement ) {
 
 		if ( _this.enabled === false ) return;
 
+		var x, y, dx, dy;
+
 		switch ( event.touches.length ) {
 
 			case 1:
-				_state = STATE.TOUCH_ROTATE;
-				_rotateStart.copy( getMouseProjectionOnBall( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
-				_rotateEnd.copy( _rotateStart );
+				_state = STATE.TOUCH_PAN;
+				x = event.touches[ 0 ].pageX;
+				y = event.touches[ 0 ].pageY;
+				_panStart.copy( getMouseOnScreen( x, y ) );
+				_panEnd.copy( _panStart );
 				break;
 
 			case 2:
-				_state = STATE.TOUCH_ZOOM_PAN;
-				var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-				var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+				_state = STATE.TOUCH_ZOOM;
+				dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+				dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
 				_touchZoomDistanceEnd = _touchZoomDistanceStart = Math.sqrt( dx * dx + dy * dy );
-
-				var x = ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX ) / 2;
-				var y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
-				_panStart.copy( getMouseOnScreen( x, y ) );
-				_panEnd.copy( _panStart );
 				break;
 
 			default:
@@ -542,20 +541,20 @@ THREE.MapControls = function ( object, domElement ) {
 		event.preventDefault();
 		event.stopPropagation();
 
+		var x, y, dx, dy;
+
 		switch ( event.touches.length ) {
 
 			case 1:
-				_rotateEnd.copy( getMouseProjectionOnBall( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
+				x = event.touches[ 0 ].pageX;
+				y = event.touches[ 0 ].pageY;
+				_panEnd.copy( getMouseOnScreen( x, y ) );
 				break;
 
 			case 2:
-				var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-				var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+				dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+				dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
 				_touchZoomDistanceEnd = Math.sqrt( dx * dx + dy * dy );
-
-				var x = ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX ) / 2;
-				var y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
-				_panEnd.copy( getMouseOnScreen( x, y ) );
 				break;
 
 			default:
@@ -572,17 +571,14 @@ THREE.MapControls = function ( object, domElement ) {
 		switch ( event.touches.length ) {
 
 			case 1:
-				_rotateEnd.copy( getMouseProjectionOnBall( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
-				_rotateStart.copy( _rotateEnd );
+				var x = event.touches[ 0 ].pageX;
+				var y = event.touches[ 0 ].pageY;
+				_panEnd.copy( getMouseOnScreen( x, y ) );
+				_panStart.copy( _panEnd );
 				break;
 
 			case 2:
 				_touchZoomDistanceStart = _touchZoomDistanceEnd = 0;
-
-				var x = ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX ) / 2;
-				var y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
-				_panEnd.copy( getMouseOnScreen( x, y ) );
-				_panStart.copy( _panEnd );
 				break;
 
 		}
