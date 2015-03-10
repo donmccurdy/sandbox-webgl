@@ -111,8 +111,23 @@
 		renderer.setSize(WIDTH, HEIGHT);
 	}, false);
 
-	/* Model
+	/* Click events
 	********************************/
+
+	var raycaster = new THREE.Raycaster(),
+		mouse = new THREE.Vector2();
+
+	renderer.domElement.addEventListener('click', function (event) {
+		mouse.x = 2 * event.clientX / WIDTH - 1;
+		mouse.y = -2 * event.clientY / HEIGHT + 1;
+		raycaster.setFromCamera(mouse, camera);
+
+		raycaster
+			.intersectObjects(scene.children)
+			.forEach(function (intersect) {
+				console.log('  --> %s', intersect.object.name);
+			});
+	});
 
 	/* View controller
 	********************************/

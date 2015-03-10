@@ -6,7 +6,7 @@
 THREE.MapControls = function ( object, domElement ) {
 
 	var _this = this;
-	var STATE = { NONE: -1, PAN: 0, ZOOM: 1, TOUCH_PAN: 3, TOUCH_ZOOM: 4 };
+	var STATE = { NONE: -1, PAN: 0, ZOOM: 1, ROTATE: 'alt+0', TOUCH_PAN: 3, TOUCH_ZOOM: 4 };
 
 	this.object = object;
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
@@ -413,6 +413,11 @@ THREE.MapControls = function ( object, domElement ) {
 
 			_state = event.button;
 
+		}
+
+		// debugging hack for rotation
+		if ( _state === STATE.PAN && event.altKey ) {
+			_state = STATE.ROTATE;
 		}
 
 		if ( _state === STATE.ROTATE && !_this.noRotate ) {
