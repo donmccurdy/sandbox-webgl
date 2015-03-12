@@ -77,7 +77,7 @@
 
 		mesh.name = country.data.name;
 
-		mesh.rotation.x = Math.PI/2;
+		mesh.rotation.x = Math.PI / 2;
 		mesh.translateX(-475);
 		mesh.translateZ(50);
 		mesh.translateY(20);
@@ -137,16 +137,8 @@
 	/* Lights
 	********************************/
 
-	var pointLight1 = new THREE.PointLight(0xFFFFFF, 0.5),
-		pointLight2 = new THREE.PointLight(0xFFFFFF, 0.8);
-
-	pointLight1.position.x = 10;
-	pointLight1.position.y = 50;
-	pointLight1.position.z = 1300;
-
-	pointLight2.position.y = 1300;
-
-	scene.add(pointLight1);
+	var pointLight2 = new THREE.PointLight(0xFFFFFF, 0.8);
+	pointLight2.position.y = 2000;
 	scene.add(pointLight2);
 
 	/* Animation loop

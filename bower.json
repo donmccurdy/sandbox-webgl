@@ -17,6 +17,7 @@
     "threejs": "*",
     "fetch": "~0.7.0",
     "stats.js": "*",
-    "THREE.Terrain": "~1.2.0"
+    "THREE.Terrain": "~1.2.0",
+    "three.map-controls": "~0.5.0"
   }
 }
