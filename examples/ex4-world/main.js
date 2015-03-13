@@ -9,46 +9,34 @@
 	/* Scene
 	********************************/
 
-	var WIDTH = window.innerWidth,
-		HEIGHT = window.innerHeight;
-
-	var VIEW_ANGLE = 45,
+	var	container = document.querySelector('#container'),
+		WIDTH = container.clientWidth,
+		HEIGHT = container.clientHeight,
 		ASPECT = WIDTH / HEIGHT,
+		VIEW_ANGLE = 45,
 		NEAR = 0.1,
 		FAR = 10000;
 
-	var container = document.querySelector('#container');
-
-	var renderer = new THREE.WebGLRenderer(),
+	var controls,
+		scene = new THREE.Scene(),
+		renderer = new THREE.WebGLRenderer(),
 		camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 
-	var scene = new THREE.Scene();
-
+	camera.position.z = -200;
+	camera.up.set(0, -1, 0);
 	scene.add(camera);
-
-	window.camera = camera;
-	camera.position.y = 200;
-	camera.up.set( 0, 0, -1 );
 
 	renderer.setSize(WIDTH, HEIGHT);
 	renderer.setClearColor(0xF0F0F0);
-
 	container.appendChild(renderer.domElement);
 
-	/* Material
-	********************************/
-
-	// https://color.adobe.com/Campfire-color-theme-2528696
-	var COLORS = [0x588C7E, 0xF2E394, 0xF2AE72, 0xD96459, 0x8C4646];
-
-	var materials = COLORS.map(function (color) {
-		return new THREE.MeshPhongMaterial({color: color, opacity: 1.0});
-	});
+	controls = new THREE.MapControls(camera, renderer.domElement);	
 
 	/* Countries
 	********************************/
 
-	var EXTRUDE_AMOUNT = 1;
+	var COLORS = [0x588C7E, 0xF2E394, 0xF2AE72, 0xD96459, 0x8C4646],
+		EXTRUDE_AMOUNT = 1;
 
 	window.fetch('models/countries.json')
 		.then(function(response) {
@@ -60,7 +48,7 @@
 		});
 
 	function loadCountry (country) {
-		var mesh, material,
+		var mesh, color, material,
 			paths = THREE.transformSVGPath(country.feature);
 		
 		for (var i = 0; i < paths.length; i++) {
@@ -72,16 +60,12 @@
 			if (i > 0) paths[0].merge(paths[i]);
 		}
 
-		material = materials[Math.floor((Math.random() * materials.length))];
+		color = COLORS[Math.floor((Math.random() * COLORS.length))];
+		material = new THREE.MeshPhongMaterial({color: color, opacity: 1.0});
+
 		mesh = new THREE.Mesh(paths[0], material);
-
 		mesh.name = country.data.name;
-
-		mesh.rotation.x = Math.PI / 2;
-		mesh.translateX(-475);
-		mesh.translateZ(50);
-		mesh.translateY(20);
-
+		mesh.position.set(-475, 50, 20);
 		scene.add(mesh);
 	}
 
@@ -89,7 +73,6 @@
 	********************************/
 
 	var stats = new Stats();
-	stats.setMode(0); // 0: fps, 1: ms
 
 	// align top-left
 	stats.domElement.style.position = 'absolute';
@@ -102,8 +85,8 @@
 	********************************/
 
 	window.addEventListener('resize', function () {
-		WIDTH = window.innerWidth;
-		HEIGHT = window.innerHeight;
+		WIDTH = container.clientWidth;
+		HEIGHT = container.clientHeight;
 		ASPECT = WIDTH / HEIGHT;
 
 		camera.aspect = ASPECT;
@@ -129,19 +112,14 @@
 			});
 	});
 
-	/* View controller
-	********************************/
-
-	var controls = new THREE.MapControls(camera, renderer.domElement);
-
 	/* Lights
 	********************************/
 
 	var pointLight2 = new THREE.PointLight(0xFFFFFF, 0.8);
-	pointLight2.position.y = 2000;
+	pointLight2.position.z = -2000;
 	scene.add(pointLight2);
 
-	/* Animation loop
+	/* Animation
 	********************************/
 
 	function update () {
@@ -152,8 +130,5 @@
 		window.requestAnimationFrame(update);
 	}
 	window.requestAnimationFrame(update);
-
-	/* Debugging exports
-	********************************/
 
 }(window.THREE, window.Stats));
