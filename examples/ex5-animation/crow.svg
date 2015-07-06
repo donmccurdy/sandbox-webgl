@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 945.667 544.333" style="enable-background:new 0 0 945.667 544.333;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#XMLID_8_);}
+	.st1{fill:#1A1A1A;}
+	.st2{fill:#333333;}
+	.st3{fill:#CCCCCC;}
+</style>
+<g id="shadow">
+		<radialGradient id="XMLID_8_" cx="518.7654" cy="483.0716" r="212.9061" gradientTransform="matrix(1 0 0 0.1 0 434.7645)" gradientUnits="userSpaceOnUse">
+		<stop  offset="0" style="stop-color:#000000;stop-opacity:0.5"/>
+		<stop  offset="0.1383" style="stop-color:#040404;stop-opacity:0.4308"/>
+		<stop  offset="0.2656" style="stop-color:#0F0F0F;stop-opacity:0.3672"/>
+		<stop  offset="0.3886" style="stop-color:#212121;stop-opacity:0.3057"/>
+		<stop  offset="0.5089" style="stop-color:#3C3C3C;stop-opacity:0.2455"/>
+		<stop  offset="0.6273" style="stop-color:#5E5E5E;stop-opacity:0.1863"/>
+		<stop  offset="0.7443" style="stop-color:#878787;stop-opacity:0.1278"/>
+		<stop  offset="0.8602" style="stop-color:#B9B9B9;stop-opacity:0.0699"/>
+		<stop  offset="0.9724" style="stop-color:#F0F0F0;stop-opacity:0.0138"/>
+		<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+	</radialGradient>
+	<ellipse id="XMLID_28_" class="st0" cx="518.765" cy="483.072" rx="299.765" ry="28.262"/>
+</g>
+<g id="wing-back">
+	<polygon id="XMLID_60_" class="st1" points="43,330 484.42,150.411 507.539,289.347 	"/>
+	<polygon id="XMLID_59_" class="st1" points="123.585,256.269 565.78,92.833 582.539,205.347 	"/>
+</g>
+<g id="leg-back">
+	<polygon id="XMLID_10_" class="st1" points="467.901,344.333 424.737,417.286 491.611,344.333 	"/>
+	<polygon id="XMLID_11_" class="st1" points="424.737,417.286 549.011,468.945 523.356,469.922 	"/>
+	<polygon id="XMLID_13_" class="st1" points="499.656,472.9 594.495,469.86 577.472,482.019 	"/>
+</g>
+<g id="body">
+	<polygon id="XMLID_55_" class="st1" points="327.853,340.333 651.667,340.333 693.531,93.205 	"/>
+	<polygon id="XMLID_54_" class="st2" points="123.935,240.333 700.714,33.937 657.384,240.333 	"/>
+</g>
+<g id="head">
+	<polygon id="XMLID_5_" class="st1" points="684.299,177.437 705.386,56.333 854.381,56.333 	"/>
+	<polygon id="XMLID_7_" points="733.677,145.989 753.408,131.684 830.966,148.468 	"/>
+	<polygon id="XMLID_6_" class="st2" points="758.592,128.347 819.472,84.221 932.667,167.516 	"/>
+	<polygon id="XMLID_15_" class="st3" points="737.06,92.619 759.681,92.833 750.7,84.221 	"/>
+</g>
+<g id="leg-front">
+	<polygon id="XMLID_49_" class="st2" points="424.737,344.333 376.71,417.286 450.879,344.333 	"/>
+	<polygon id="XMLID_48_" class="st2" points="376.71,417.286 503.162,480.333 480.516,480.333 	"/>
+	<polygon id="XMLID_47_" class="st2" points="444.407,484.548 540.246,481.508 522.224,493.667 	"/>
+</g>
+<g id="wing-front">
+	<polygon id="XMLID_3_" points="48.585,321.269 484.42,131.411 507.539,270.347 	"/>
+	<polygon id="XMLID_4_" class="st2" points="13.812,374.585 440.228,176.661 491.604,289.074 	"/>
+</g>
+</svg>
