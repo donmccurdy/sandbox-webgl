@@ -1,0 +1,53 @@
+
+/* Head
+ ******************************************/
+
+#head {
+	animation: nod 10s infinite;
+}
+
+@keyframes nod {
+	0% { transform: translateY(0px); }
+	30% { transform: translateY(12px); }
+	40% { transform: translateY(0px); }
+	50% { transform: translateY(0px); }
+	70% { transform: translateY(24px); }
+	85% { transform: translateY(0px); }
+	100% { transform: translateY(0px); }
+}
+
+/* Wing Front
+ ******************************************/
+
+#wing-front {
+	animation: wing-front-fidget 8s infinite;
+}
+
+@keyframes wing-front-fidget {
+	0% { transform: translateY(0px); }
+	50% { transform: translateY(10px); }
+	65% { transform: translateY(12px); }
+	66% { transform: translateY(10px); }
+	67% { transform: translateY(11px); }
+	68% { transform: translateY(12px); }
+	69% { transform: translateY(11px); }
+	100% { transform: translateY(0px); }
+}
+
+/* Wing Back
+ ******************************************/
+
+#wing-back {
+	animation: wing-back-fidget 5s infinite;
+}
+
+@keyframes wing-back-fidget {
+	0% { transform: translateY(0px); }
+	50% { transform: translateY(10px); }
+	65% { transform: translateY(12px); }
+	66% { transform: translateY(10px); }
+	67% { transform: translateY(11px); }
+	68% { transform: translateY(12px); }
+	69% { transform: translateY(11px); }
+	100% { transform: translateY(0px); }
+}

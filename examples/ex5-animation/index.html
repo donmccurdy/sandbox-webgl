@@ -1,8 +1,25 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<title>WebGL Demo 4 - CSS3 Animation</title>
 	</head>
 	<body>
-		<object type="image/svg+xml" data="crow.svg">Crow Animation</object>
+		<object id="crow" type="image/svg+xml" data="crow.svg">Crow Animation</object>
+		<script>
+			window.addEventListener('load', function () {
+				var element = document.querySelector('#crow'),
+					svgDoc = element.contentDocument,
+					stylesheet = svgDoc.querySelector('#crow-animation')
+				;
+				window.fetch('./animation.css').then(function (response) {
+					return response.text();
+				}).then(function (style) {
+					stylesheet.textContent = style;
+				}).catch(function (e) {
+					console.error('Could not fetch styles.');
+					console.log(e);
+				});
+			});
+		</script>
 	</body>
 </html>

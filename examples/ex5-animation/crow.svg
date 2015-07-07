@@ -2,12 +2,15 @@
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 945.667 544.333" style="enable-background:new 0 0 945.667 544.333;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:url(#XMLID_8_);}
-	.st1{fill:#1A1A1A;}
-	.st2{fill:#333333;}
-	.st3{fill:#CCCCCC;}
-</style>
+<defs>
+	<style type="text/css">
+		.st0{fill:url(#XMLID_8_);}
+		.st1{fill:#1A1A1A;}
+		.st2{fill:#333333;}
+		.st3{fill:#CCCCCC;}
+	</style>
+	<style type="text/css" id="crow-animation"></style>
+</defs>
 <g id="shadow">
 		<radialGradient id="XMLID_8_" cx="518.7654" cy="483.0716" r="212.9061" gradientTransform="matrix(1 0 0 0.1 0 434.7645)" gradientUnits="userSpaceOnUse">
 		<stop  offset="0" style="stop-color:#000000;stop-opacity:0.5"/>
