@@ -4,29 +4,29 @@
     <meta charset="utf-8">
     <title>Hello, World! • A-Frame</title>
     <meta name="description" content="Hello, World! • A-Frame">
-    <script src="https://aframe.io/releases/latest/aframe.js"></script>
+    <script src="http://localhost:9000/dist/aframe.js"></script>
   </head>
   <body>
     <a-scene>
 
       <a-entity position="0 0 -20"
-                material="color: #7BC8A4; opacity: 1"
-                loader="src: url(models/tree2.obj); format: obj">
+                material="src: url(../../models/tree2.mtl); opacity: 1"
+                loader="src: url(../../models/tree2.obj); format: obj">
       </a-entity>
 
       <a-entity position="20 0 0"
                 material="color: #7BC8A4; opacity: 1"
-                loader="src: url(models/tree2.obj); format: obj">
+                loader="src: url(../../models/tree2.obj); format: obj">
       </a-entity>
 
       <a-entity position="-20 0 0"
                 material="color: #7BC8A4; opacity: 1"
-                loader="src: url(models/tree2.obj); format: obj">
+                loader="src: url(../../models/tree2.obj); format: obj">
       </a-entity>
 
       <a-entity position="0 0 20"
                 material="color: #7BC8A4; opacity: 1"
-                loader="src: url(models/tree2.obj); format: obj">
+                loader="src: url(../../models/tree2.obj); format: obj">
       </a-entity>
 
       <a-sky color="#ECECEC"></a-sky>

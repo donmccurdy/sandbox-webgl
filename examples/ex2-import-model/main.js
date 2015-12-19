@@ -71,10 +71,14 @@
 	/* Model
 	********************************/
 
-	loader.load('models/tree2.obj', 'models/tree2.mtl', function (object) {
-		object.position.y = -2.5;
-		scene.add(object);
-	});
+	loader.load(
+		'../../models/tree2.obj',
+		'../../models/tree2.mtl',
+		function (object) {
+			object.position.y = -2.5;
+			scene.add(object);
+		}
+	);
 
 	/* View controller
 	********************************/
